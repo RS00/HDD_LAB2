@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <Wbemidl.h>
 #include <comdef.h>
+#include <vector>
 using namespace std;
 
 #pragma comment(lib, "wbemuuid.lib")
@@ -21,7 +22,7 @@ private:
 	//Set proxy security levels
 	BOOL setProxySecurity();
 public:
-	LPCWSTR getInfo(IEnumWbemClassObject*, LPCWSTR req, LPCWSTR property);
+	vector<wstring> getInfo(IEnumWbemClassObject*, LPCWSTR req, LPCWSTR property);
 	WMIQuery();
 	~WMIQuery();
 };

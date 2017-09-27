@@ -86,10 +86,12 @@ BOOL WMIQuery::setProxySecurity()
 	return !failed;
 }
 
-LPCWSTR WMIQuery::getInfo(IEnumWbemClassObject *pEnumerator, LPCWSTR req, LPCWSTR property)
+vector<wstring> WMIQuery::getInfo(IEnumWbemClassObject *pEnumerator, LPCWSTR req, LPCWSTR property)
 {
+	//out buffer
+	vector<wstring> output;
 	if (!initCOM() || !coInitSecurity() || !obtainLocator() || !connectToWMI() || !setProxySecurity())
-		return NULL;
+		return output;
 	HRESULT hres = pSvc->ExecQuery(
 		bstr_t("WQL"),
 		bstr_t(req),
@@ -97,29 +99,51 @@ LPCWSTR WMIQuery::getInfo(IEnumWbemClassObject *pEnumerator, LPCWSTR req, LPCWST
 		NULL,
 		&pEnumerator);
 	if (FAILED(hres))
-		return NULL;
+	{
+		pSvc->Release();
+		pLoc->Release();
+		CoUninitialize();
+		return output;
+	}
 	IWbemClassObject *pclsObj = NULL;
 	ULONG uReturn = 0;
-	HRESULT hr = pEnumerator->Next(WBEM_INFINITE, 1,
-			&pclsObj, &uReturn);
-
-	if (uReturn == 0)
-	{
-		return NULL;
-	}
-
 	VARIANT vtProp;
+	
 
-	// Get the value 
-	hr = pclsObj->Get(property, 0, &vtProp, 0, 0);
-	VariantClear(&vtProp);
-	pclsObj->Release();
-	return 	vtProp.bstrVal;
+	while (pEnumerator)
+	{
+		HRESULT hr = pEnumerator->Next(WBEM_INFINITE, 1,
+			&pclsObj, &uReturn);
+		if (FAILED(hr) || uReturn == 0)
+		{
+			pSvc->Release();
+			pLoc->Release();
+			CoUninitialize();
+			return output;
+		}	
+
+		// Get the value 
+		hr = pclsObj->Get(property, 0, &vtProp, 0, 0);
+		if (vtProp.bstrVal == NULL)
+		{
+			pSvc->Release();
+			pLoc->Release();
+			continue;
+		}
+		wstring ws(vtProp.bstrVal, SysStringLen(vtProp.bstrVal));
+		output.push_back(ws);
+		VariantClear(&vtProp);
+		pSvc->Release();
+		pLoc->Release();
+	}
+	CoUninitialize();
+	return 	output;
 
 }
 
 WMIQuery::WMIQuery()
 {
+	
 }
 
 
