@@ -21,6 +21,7 @@ private:
 	//Set proxy security levels
 	BOOL setProxySecurity();
 public:
+	LPCWSTR getInfo(IEnumWbemClassObject*, LPCWSTR req, LPCWSTR property);
 	WMIQuery();
 	~WMIQuery();
 };

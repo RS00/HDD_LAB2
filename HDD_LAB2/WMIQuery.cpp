@@ -86,6 +86,38 @@ BOOL WMIQuery::setProxySecurity()
 	return !failed;
 }
 
+LPCWSTR WMIQuery::getInfo(IEnumWbemClassObject *pEnumerator, LPCWSTR req, LPCWSTR property)
+{
+	if (!initCOM() || !coInitSecurity() || !obtainLocator() || !connectToWMI() || !setProxySecurity())
+		return NULL;
+	HRESULT hres = pSvc->ExecQuery(
+		bstr_t("WQL"),
+		bstr_t(req),
+		WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+		NULL,
+		&pEnumerator);
+	if (FAILED(hres))
+		return NULL;
+	IWbemClassObject *pclsObj = NULL;
+	ULONG uReturn = 0;
+	HRESULT hr = pEnumerator->Next(WBEM_INFINITE, 1,
+			&pclsObj, &uReturn);
+
+	if (uReturn == 0)
+	{
+		return NULL;
+	}
+
+	VARIANT vtProp;
+
+	// Get the value 
+	hr = pclsObj->Get(property, 0, &vtProp, 0, 0);
+	VariantClear(&vtProp);
+	pclsObj->Release();
+	return 	vtProp.bstrVal;
+
+}
+
 WMIQuery::WMIQuery()
 {
 }
