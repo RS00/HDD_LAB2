@@ -5,6 +5,9 @@
 #include <stdint.h>
 #include <vector>
 #define bufferSize 512
+#define ATA_OFFSET 80
+#define DMA_OFFSET 63
+#define ULTRA_DMA_OFFSET 88
 
 class StorageProperty
 {

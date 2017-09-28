@@ -53,7 +53,7 @@ int16_t StorageProperty::getSupportedATA()
 		return bResult;
 	}
 	WORD *data = (WORD *)(dataBuffer + sizeof(ATA_PASS_THROUGH_EX));
-	int16_t ataSupportBits = data[80];
+	int16_t ataSupportBits = data[ATA_OFFSET];
 	CloseHandle(hDevice);
 	return ataSupportBits;
 }
@@ -84,7 +84,7 @@ int16_t StorageProperty::getSupportedDMA()
 		return bResult;
 	}
 	WORD *data = (WORD *)(dataBuffer + sizeof(ATA_PASS_THROUGH_EX));
-	int16_t dmaModes = data[63];
+	int16_t dmaModes = data[DMA_OFFSET];
 	CloseHandle(hDevice);
 	return dmaModes;
 }
@@ -115,7 +115,7 @@ int16_t StorageProperty::getSupportedUltraDMA()
 		return bResult;
 	}
 	WORD *data = (WORD *)(dataBuffer + sizeof(ATA_PASS_THROUGH_EX));
-	int16_t dmaModes = data[88];
+	int16_t dmaModes = data[ULTRA_DMA_OFFSET];
 	CloseHandle(hDevice);
 	return dmaModes;
 }
