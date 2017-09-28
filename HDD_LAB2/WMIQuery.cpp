@@ -133,9 +133,10 @@ vector<wstring> WMIQuery::getInfo(IEnumWbemClassObject *pEnumerator, LPCWSTR req
 		wstring ws(vtProp.bstrVal, SysStringLen(vtProp.bstrVal));
 		output.push_back(ws);
 		VariantClear(&vtProp);
-		pSvc->Release();
-		pLoc->Release();
+		
 	}
+	pSvc->Release();
+	pLoc->Release();
 	CoUninitialize();
 	return 	output;
 

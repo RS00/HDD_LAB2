@@ -27,7 +27,6 @@ BOOLEAN StorageProperty::isPioUsed()
 }
 
 
-
 int16_t StorageProperty::getSupportedATA()
 {
 	DWORD dwBytes;
@@ -46,7 +45,6 @@ int16_t StorageProperty::getSupportedATA()
 	ideRegs->bCommandReg = identifyDataCommandId;
 	ideRegs->bSectorCountReg = 1;
 	ATA.AtaFlags = ATA_FLAGS_DATA_IN | ATA_FLAGS_DRDY_REQUIRED;
-
 	bResult = DeviceIoControl(hDevice, IOCTL_ATA_PASS_THROUGH, &ATA,
 		sizeof(dataBuffer), &ATA,
 		sizeof(dataBuffer), &dwBytes, 0);
@@ -54,14 +52,73 @@ int16_t StorageProperty::getSupportedATA()
 	if (bResult == FALSE) {
 		return bResult;
 	}
-
 	WORD *data = (WORD *)(dataBuffer + sizeof(ATA_PASS_THROUGH_EX));
 	int16_t ataSupportBits = data[80];
 	CloseHandle(hDevice);
 	return ataSupportBits;
 }
 
+int16_t StorageProperty::getSupportedDMA()
+{
+	DWORD dwBytes;
+	BOOL  bResult;
+	HANDLE hDevice = CreateFileW(L"\\\\.\\PhysicalDrive0", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+	CONST BYTE identifyDataCommandId = 0xEC;
+	UCHAR dataBuffer[bufferSize + sizeof(ATA_PASS_THROUGH_EX)] = { 0 };
 
+	ATA_PASS_THROUGH_EX &ATA = *(ATA_PASS_THROUGH_EX *)dataBuffer;
+	ATA.Length = sizeof(ATA);
+	ATA.TimeOutValue = 10;
+	ATA.DataBufferOffset = sizeof(ATA_PASS_THROUGH_EX);
+	ATA.DataTransferLength = bufferSize;
+
+	IDEREGS * ideRegs = (IDEREGS *)ATA.CurrentTaskFile;
+	ideRegs->bCommandReg = identifyDataCommandId;
+	ideRegs->bSectorCountReg = 1;
+	ATA.AtaFlags = ATA_FLAGS_DATA_IN | ATA_FLAGS_DRDY_REQUIRED;
+	bResult = DeviceIoControl(hDevice, IOCTL_ATA_PASS_THROUGH, &ATA,
+		sizeof(dataBuffer), &ATA,
+		sizeof(dataBuffer), &dwBytes, 0);
+
+	if (bResult == FALSE) {
+		return bResult;
+	}
+	WORD *data = (WORD *)(dataBuffer + sizeof(ATA_PASS_THROUGH_EX));
+	int16_t dmaModes = data[63];
+	CloseHandle(hDevice);
+	return dmaModes;
+}
+
+int16_t StorageProperty::getSupportedUltraDMA()
+{
+	DWORD dwBytes;
+	BOOL  bResult;
+	HANDLE hDevice = CreateFileW(L"\\\\.\\PhysicalDrive0", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+	CONST BYTE identifyDataCommandId = 0xEC;
+	UCHAR dataBuffer[bufferSize + sizeof(ATA_PASS_THROUGH_EX)] = { 0 };
+
+	ATA_PASS_THROUGH_EX &ATA = *(ATA_PASS_THROUGH_EX *)dataBuffer;
+	ATA.Length = sizeof(ATA);
+	ATA.TimeOutValue = 10;
+	ATA.DataBufferOffset = sizeof(ATA_PASS_THROUGH_EX);
+	ATA.DataTransferLength = bufferSize;
+
+	IDEREGS * ideRegs = (IDEREGS *)ATA.CurrentTaskFile;
+	ideRegs->bCommandReg = identifyDataCommandId;
+	ideRegs->bSectorCountReg = 1;
+	ATA.AtaFlags = ATA_FLAGS_DATA_IN | ATA_FLAGS_DRDY_REQUIRED;
+	bResult = DeviceIoControl(hDevice, IOCTL_ATA_PASS_THROUGH, &ATA,
+		sizeof(dataBuffer), &ATA,
+		sizeof(dataBuffer), &dwBytes, 0);
+
+	if (bResult == FALSE) {
+		return bResult;
+	}
+	WORD *data = (WORD *)(dataBuffer + sizeof(ATA_PASS_THROUGH_EX));
+	int16_t dmaModes = data[88];
+	CloseHandle(hDevice);
+	return dmaModes;
+}
 
 StorageProperty::~StorageProperty()
 {

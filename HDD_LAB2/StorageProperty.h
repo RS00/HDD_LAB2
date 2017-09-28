@@ -15,6 +15,8 @@ public:
 	StorageProperty();
 	BOOLEAN isPioUsed();
 	int16_t getSupportedATA();
+	int16_t getSupportedDMA();
+	int16_t getSupportedUltraDMA();
 	~StorageProperty();
 };
 
