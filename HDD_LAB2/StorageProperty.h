@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include <atlstr.h>  
 
 class StorageProperty
 {
@@ -8,6 +9,7 @@ private:
 	STORAGE_PROPERTY_QUERY storagePropertyQuery;
 public:
 	StorageProperty(LPCTSTR drivePath);
+	BOOLEAN isPioUsed();
 	~StorageProperty();
 };
 

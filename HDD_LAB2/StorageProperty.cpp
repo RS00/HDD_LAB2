@@ -12,7 +12,22 @@ StorageProperty::StorageProperty(LPCTSTR drivePath)
 	storagePropertyQuery.QueryType = PropertyStandardQuery;
 }
 
+BOOLEAN StorageProperty::isPioUsed()
+{
+	_STORAGE_ADAPTER_DESCRIPTOR descriptor = {};
+
+	DWORD read;
+	DeviceIoControl(hDevice, IOCTL_STORAGE_QUERY_PROPERTY,
+		&storagePropertyQuery,
+		sizeof(storagePropertyQuery),
+		&descriptor,
+		sizeof(descriptor),
+		&read,
+		NULL);
+	return descriptor.AdapterUsesPio == true;
+}
 
 StorageProperty::~StorageProperty()
 {
+	CloseHandle(hDevice);
 }
