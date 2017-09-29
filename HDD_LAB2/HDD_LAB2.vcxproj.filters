@@ -24,12 +24,18 @@
     <ClCompile Include="WMIQuery.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
+    <ClCompile Include="HDDInfoPrinter.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StorageProperty.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="WMIQuery.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="HDDInfoPrinter.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>

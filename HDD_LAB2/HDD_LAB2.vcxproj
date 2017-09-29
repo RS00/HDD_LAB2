@@ -139,11 +139,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HDDInfoPrinter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="StorageProperty.cpp" />
     <ClCompile Include="WMIQuery.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="HDDInfoPrinter.h" />
     <ClInclude Include="StorageProperty.h" />
     <ClInclude Include="WMIQuery.h" />
   </ItemGroup>
